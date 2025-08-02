@@ -1,6 +1,6 @@
 # StructureLib
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)](https://github.com/T3CC4/StructureLib/releases)
+[![Version](https://img.shields.io/badge/version-1.0-blue.svg)](https://github.com/T3CC4/StructureLib/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.8-green.svg)](https://www.minecraft.net/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
 [![API](https://img.shields.io/badge/bukkit-1.21-orange.svg)](https://hub.spigotmc.org/)
