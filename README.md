@@ -251,67 +251,7 @@ api.placeStructure(structure, location, 90, false, processor);
 
 ---
 
-## ⚙️ Configuration
-
-### plugin.yml
-
-```yaml
-name: StructureLib
-version: 1.0.0
-main: de.tecca.structurelib.StructureLib
-api-version: 1.21
-depend: [WorldEdit]
-author: Tecca
-description: Optimized structure saving and loading library
-
-commands:
-  struct:
-    description: Structure management commands
-    usage: /struct <save|place> <id>
-    aliases: [structure]
-
-permissions:
-  structurelib.use:
-    description: Use structure commands
-    default: op
-  structurelib.save:
-    description: Save structures
-    default: op
-  structurelib.place:
-    description: Place structures
-    default: op
-```
-
-### File Structure
-
-```
-plugins/
-└── StructureLib/
-    ├── structures/          # Saved structures
-    │   ├── house.json
-    │   ├── castle.json
-    │   └── ...
-    └── config.yml          # Plugin configuration
-```
-
----
-
 ## 📊 Performance
-
-### Optimization Statistics
-
-| Structure Type | Original Size | Optimized Size | Reduction |
-|---------------|---------------|----------------|-----------|
-| Solid Building | 1000 blocks | 50 regions | 95% |
-| Hollow Castle | 5000 blocks | 200 regions | 96% |
-| Complex Build | 10000 blocks | 800 regions | 92% |
-
-### Benchmarks
-
-- **Capture Speed**: Up to 50,000 blocks/second
-- **Placement Speed**: Up to 100,000 blocks/second  
-- **Memory Usage**: 95% reduction vs. individual block storage
-- **File Size**: 90% smaller than traditional formats
 
 ### Optimization Techniques
 
