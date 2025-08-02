@@ -1,0 +1,181 @@
+name: StructureLib CI/CD
+
+on:
+  push:
+    branches: [ "main", "develop" ]
+  pull_request:
+    branches: [ "main" ]
+  release:
+    types: [published]
+
+jobs:
+  build:
+    name: Build & Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Cache Maven Dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+        
+    - name: Validate Maven Configuration
+      run: mvn validate
+      
+    - name: Compile Project
+      run: mvn clean compile -B
+      
+    - name: Run Tests
+      run: mvn test -B
+      continue-on-error: false
+      
+    - name: Package Plugin
+      run: mvn package -B -DskipTests
+      
+    - name: Verify Build Artifacts
+      run: |
+        ls -la target/
+        if [ ! -f target/StructureLib-*.jar ]; then
+          echo "JAR file not found!"
+          exit 1
+        fi
+        
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: StructureLib-${{ github.sha }}
+        path: |
+          target/StructureLib-*.jar
+          target/dependency-reduced-pom.xml
+        retention-days: 30
+        
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ github.sha }}
+        path: target/surefire-reports/
+        retention-days: 7
+        
+    - name: Update Dependency Graph
+      uses: advanced-security/maven-dependency-submission-action@v3
+      with:
+        settings-file: .github/settings.xml
+      continue-on-error: true
+
+  code-quality:
+    name: Code Quality Check
+    runs-on: ubuntu-latest
+    needs: build
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Run SpotBugs Analysis
+      run: mvn spotbugs:check -B
+      continue-on-error: true
+      
+    - name: Check Code Style
+      run: mvn checkstyle:check -B
+      continue-on-error: true
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: [build, code-quality]
+    if: github.event_name == 'release'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: maven
+        
+    - name: Extract Version from Tag
+      id: version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+      
+    - name: Update Version in POM
+      run: mvn versions:set -DnewVersion=${{ steps.version.outputs.VERSION }} -B
+      
+    - name: Build Release
+      run: mvn clean package -B -DskipTests
+      
+    - name: Rename JAR for Release
+      run: |
+        mv target/StructureLib-*.jar target/StructureLib-${{ steps.version.outputs.VERSION }}.jar
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: target/StructureLib-${{ steps.version.outputs.VERSION }}.jar
+        asset_name: StructureLib-${{ steps.version.outputs.VERSION }}.jar
+        asset_content_type: application/java-archive
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      
+    - name: Run Trivy Vulnerability Scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        
+    - name: Upload Trivy Results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  notify:
+    name: Notification
+    runs-on: ubuntu-latest
+    needs: [build, code-quality]
+    if: always()
+    
+    steps:
+    - name: Notify Build Status
+      run: |
+        if [ "${{ needs.build.result }}" == "success" ] && [ "${{ needs.code-quality.result }}" == "success" ]; then
+          echo "✅ Build and Quality Checks Passed"
+        else
+          echo "❌ Build or Quality Checks Failed"
+          exit 1
+        fi
