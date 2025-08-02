@@ -1,0 +1,24 @@
+name: StructureLib
+version: 1.0.0
+main: de.tecca.structureLib.StructureLib
+api-version: 1.21
+depend: [WorldEdit]
+author: Tecca
+description: Optimized structure saving and loading library
+
+commands:
+  struct:
+    description: Structure management commands
+    usage: /struct <save|place> <id>
+    aliases: [structure]
+
+permissions:
+  structurelib.use:
+    description: Use structure commands
+    default: op
+  structurelib.save:
+    description: Save structures
+    default: op
+  structurelib.place:
+    description: Place structures
+    default: op
