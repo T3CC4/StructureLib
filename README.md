@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/badge/version-1.1-orange.svg)](https://github.com/T3CC4/StructureLib/releases)
 [![Minecraft](https://img.shields.io/badge/minecraft-1.21.8-green.svg)](https://www.minecraft.net/)
 [![License](https://img.shields.io/badge/license-MIT-yellow.svg)](LICENSE)
-[![API](https://img.shields.io/badge/bukkit-1.21-orange.svg)](https://hub.spigotmc.org/)
+[![API](https://img.shields.io/badge/paper-1.21-orange.svg)](https://hub.spigotmc.org/)
 [![Status](https://img.shields.io/badge/status-alpha--development-red.svg)]()
 
 > A high-performance Minecraft plugin for saving and placing optimized structures with intelligent JSON serialization and metadata-driven natural spawning.
