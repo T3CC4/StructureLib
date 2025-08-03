@@ -327,16 +327,19 @@ class StructureMetadataGUI implements Listener {
         StructureMetadata metadata = tempMetadata.get(tempKey);
         IntRange range = metadata.getSpawnHeightRange();
 
+        // Min height controls
         heightGUI.setItem(9, createHeightControlItem("§cMin Height: " + range.getMin(), Material.RED_CONCRETE, "min", -10));
         heightGUI.setItem(10, createHeightControlItem("§c-1", Material.RED_TERRACOTTA, "min", -1));
         heightGUI.setItem(11, createHeightControlItem("§a+1", Material.GREEN_TERRACOTTA, "min", 1));
         heightGUI.setItem(12, createHeightControlItem("§aMin Height: +" + 10, Material.GREEN_CONCRETE, "min", 10));
 
+        // Max height controls
         heightGUI.setItem(14, createHeightControlItem("§cMax Height: " + range.getMax(), Material.RED_CONCRETE, "max", -10));
         heightGUI.setItem(15, createHeightControlItem("§c-1", Material.RED_TERRACOTTA, "max", -1));
         heightGUI.setItem(16, createHeightControlItem("§a+1", Material.GREEN_TERRACOTTA, "max", 1));
         heightGUI.setItem(17, createHeightControlItem("§aMax Height: +" + 10, Material.GREEN_CONCRETE, "max", 10));
 
+        // Preset buttons
         heightGUI.setItem(3, createHeightPresetItem("Underground", new IntRange(-64, 50)));
         heightGUI.setItem(4, createHeightPresetItem("Surface", new IntRange(50, 120)));
         heightGUI.setItem(5, createHeightPresetItem("Mountain", new IntRange(80, 320)));
@@ -384,11 +387,13 @@ class StructureMetadataGUI implements Listener {
         String tempKey = player.getName() + ":" + structureId;
         StructureMetadata metadata = tempMetadata.get(tempKey);
 
+        // Same structure distance controls
         distanceGUI.setItem(9, createDistanceControlItem("§cSame: " + metadata.getMinDistanceFromSame(), Material.RED_CONCRETE, "same", -50));
         distanceGUI.setItem(10, createDistanceControlItem("§c-10", Material.RED_TERRACOTTA, "same", -10));
         distanceGUI.setItem(11, createDistanceControlItem("§a+10", Material.GREEN_TERRACOTTA, "same", 10));
         distanceGUI.setItem(12, createDistanceControlItem("§aSame: +" + 50, Material.GREEN_CONCRETE, "same", 50));
 
+        // Any structure distance controls
         distanceGUI.setItem(14, createDistanceControlItem("§cAny: " + metadata.getMinDistanceFromAny(), Material.RED_CONCRETE, "any", -25));
         distanceGUI.setItem(15, createDistanceControlItem("§c-5", Material.RED_TERRACOTTA, "any", -5));
         distanceGUI.setItem(16, createDistanceControlItem("§a+5", Material.GREEN_TERRACOTTA, "any", 5));
@@ -491,6 +496,7 @@ class StructureMetadataGUI implements Listener {
         String tempKey = player.getName() + ":" + structureId;
         StructureMetadata metadata = tempMetadata.get(tempKey);
 
+        // Common tag presets
         String[] commonTags = {
                 "village", "house", "building", "medieval", "modern", "fantasy",
                 "castle", "tower", "dungeon", "farm", "temple", "ruins",
@@ -503,6 +509,7 @@ class StructureMetadataGUI implements Listener {
             tagsGUI.setItem(slot++, createTagToggleItem(tag, metadata.getTags().contains(tag)));
         }
 
+        // Add custom tag button
         ItemStack addCustom = new ItemStack(Material.WRITABLE_BOOK);
         ItemMeta addMeta = addCustom.getItemMeta();
         addMeta.setDisplayName("§aAdd Custom Tag");
@@ -746,6 +753,7 @@ class StructureMetadataGUI implements Listener {
             metadata.getAllowedBiomes().remove(biomeName);
         }
 
+        // Update temp metadata
         tempMetadata.put(tempKey, metadata);
 
         openBiomeSelector(player, structureId);
@@ -784,6 +792,7 @@ class StructureMetadataGUI implements Listener {
                 metadata.getAllowedDimensions().add(dimension);
             }
 
+            // Update temp metadata
             tempMetadata.put(tempKey, metadata);
 
             openDimensionSelector(player, structureId);
@@ -810,6 +819,7 @@ class StructureMetadataGUI implements Listener {
 
         IntRange currentRange = metadata.getSpawnHeightRange();
 
+        // Preset buttons
         switch (event.getSlot()) {
             case 3: // Underground
                 metadata.setSpawnHeightRange(new IntRange(-64, 50));
@@ -828,6 +838,7 @@ class StructureMetadataGUI implements Listener {
                 return;
         }
 
+        // Min height controls
         int newMin = currentRange.getMin();
         int newMax = currentRange.getMax();
 

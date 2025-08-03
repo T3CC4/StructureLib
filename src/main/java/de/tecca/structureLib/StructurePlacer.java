@@ -784,7 +784,7 @@ class StructurePlacer {
                 int slot = entry.getKey();
                 ItemStack item = entry.getValue();
 
-                if (slot >= 0 && slot < 3) {
+                if (slot >= 0 && slot < 3) { // Furnace only has 3 slots
                     inv.setItem(slot, item);
                     plugin.getLogger().info("Set furnace slot " + slot + " to " + item.getType() + " x" + item.getAmount());
                 }
