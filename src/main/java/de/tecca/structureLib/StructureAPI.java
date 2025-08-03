@@ -12,15 +12,17 @@ import java.nio.file.Files;
 
 class StructureAPI {
     private final Gson gson;
+    private final EnhancedStructureCapture enhancedCapture;
 
     public StructureAPI() {
         this.gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .create();
+        this.enhancedCapture = new EnhancedStructureCapture();
     }
 
     public Structure captureStructure(Region region, World world, String id) {
-        return new StructureCapture().capture(region, world, id);
+        return enhancedCapture.capture(region, world, id);
     }
 
     public void saveStructure(Structure structure, File file) throws IOException {
@@ -29,7 +31,13 @@ class StructureAPI {
 
     public Structure loadStructure(File file) throws IOException {
         String json = Files.readString(file.toPath());
-        return gson.fromJson(json, Structure.class);
+        Structure structure = gson.fromJson(json, Structure.class);
+
+        if (structure.getMetadata() == null) {
+            structure.setMetadata(new StructureMetadata());
+        }
+
+        return structure;
     }
 
     public void placeStructure(Structure structure, Location location) {
@@ -38,5 +46,9 @@ class StructureAPI {
 
     public void placeStructure(Structure structure, Location location, int rotation, boolean randomRotation) {
         new StructurePlacer(StructureLib.getPlugin()).place(structure, location, rotation, randomRotation);
+    }
+
+    public void placeStructure(Structure structure, Location location, int rotation, boolean randomRotation, LootProcessor lootProcessor) {
+        new StructurePlacer(StructureLib.getPlugin()).place(structure, location, rotation, randomRotation, lootProcessor);
     }
 }

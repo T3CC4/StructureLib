@@ -1,24 +1,53 @@
 name: StructureLib
-version: 1.0.0
+version: 1.0
 main: de.tecca.structureLib.StructureLib
 api-version: 1.21
 depend: [WorldEdit]
 author: Tecca
-description: Optimized structure saving and loading library
+description: Optimized structure saving and loading library with metadata-based natural spawning
 
 commands:
   struct:
     description: Structure management commands
-    usage: /struct <save|place> <id>
+    usage: |
+      /struct save <id> - Save WorldEdit selection as structure
+      /struct place <id> [rotation] - Place structure at current location
+      /struct info <id> - Show structure information and metadata
+      /struct edit <id> - Open metadata editor GUI
+      /struct list [tag] [dimension] - List structures with optional filters
+      /struct enable-spawning <id> - Enable natural spawning for structure
     aliases: [structure]
 
 permissions:
   structurelib.use:
-    description: Use structure commands
+    description: Use basic structure commands
     default: op
+    children:
+      - structurelib.save
+      - structurelib.place
+      - structurelib.info
   structurelib.save:
     description: Save structures
     default: op
   structurelib.place:
     description: Place structures
     default: op
+  structurelib.info:
+    description: View structure information
+    default: op
+  structurelib.edit:
+    description: Edit structure metadata
+    default: op
+  structurelib.list:
+    description: List structures
+    default: op
+  structurelib.spawning:
+    description: Manage natural spawning
+    default: op
+  structurelib.admin:
+    description: Full admin access to all features
+    default: op
+    children:
+      - structurelib.use
+      - structurelib.edit
+      - structurelib.spawning
